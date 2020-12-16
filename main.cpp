@@ -45,13 +45,14 @@ int client_height = 640;
 
 v2 player;
 v2 d_player;
+v2 dd_player;
 
 int moving_left;
 int moving_right;
 int moving_up;
 int moving_down;
 
-int tile_size = 25;
+int tile_size = 64;
 
 void* memory;
 BITMAPINFO bitmap_info;
@@ -295,24 +296,28 @@ wWinMain(HINSTANCE instance,
         start_counter = end_counter;
         
         float dt = seconds_per_frame;
-        float speed = 250.0f;
+        float speed = 5000.0f;
         
-        if(moving_right) d_player.x = 1.0f;
-        if(moving_left) d_player.x = -1.0f;
-        if(moving_up) d_player.y = 1.0f;
-        if(moving_down) d_player.y = -1.0f;
+        if(moving_right) dd_player.x = 1.0f;
+        if(moving_left) dd_player.x = -1.0f;
+        if(moving_up) dd_player.y = 1.0f;
+        if(moving_down) dd_player.y = -1.0f;
         
-        d_player *= speed;
+        dd_player *= speed;
         
-        if(d_player.x != 0.0f && d_player.y != 0.0f)
+        dd_player += -5.0f * d_player;
+        
+        if(dd_player.x != 0.0f && dd_player.y != 0.0f)
         {
-            d_player *= 0.707f;
+            dd_player *= 0.707f;
         }
         
-        player += dt * d_player;
+        player += dt * d_player + dt * dt * 0.5f * dd_player;
         
-        d_player.x = 0.0f;
-        d_player.y = 0.0f;
+        d_player += dt * dd_player;
+        
+        dd_player.x = 0.0f;
+        dd_player.y = 0.0f;
         
         clear_screen(0x111111);
         
